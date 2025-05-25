@@ -15,17 +15,20 @@ local coords_label = form:addLabel():setPosition(1,4)
 
 local function locate()
     while true do
-        local x, y, z = gps.locate()
-
-        if x and y and z then
-            coords_label:setText(string.format("X:%d, Y:%d, Z:%d", x, y, z))
-            main:setState("coords", { x = x, y = y, z = z })
-        else
-            coords_label:setText("X:?, Y:?, Z:?")
-            main:setState("coords", { x = "?", y = "?", z = "?" })
-            print("GPS locate failed")
+        local tab = main:getState("tab")
+        if tab==1 then
+            local x, y, z = gps.locate()
+            
+            if x and y and z then
+                coords_label:setText(string.format("X:%d, Y:%d, Z:%d", x, y, z))
+                main:setState("coords", { x = x, y = y, z = z })
+            else
+                coords_label:setText("X:?, Y:?, Z:?")
+                main:setState("coords", { x = "?", y = "?", z = "?" })
+                print("GPS locate failed")
+            end
         end
-
+            
         sleep(1.5)
     end
 end
@@ -67,15 +70,18 @@ main:onStateChange("channel", validate_channel)
 
 local function broadcast()
     while true do
+        local tab = main:getState("tab")
+
         local channel = main:getState("channel")
         local coords = main:getState("coords")
         local channel_number = tonumber(channel)
 
-        if channel and channel:match("^%d+$") and channel_number and channel_number <= 65533 then
+        if tab==1 and channel and channel:match("^%d+$") and channel_number and channel_number <= 65533 then
             modem.transmit(channel_number, channel_number, textutils.serialize(coords))
         end
+        
 
-        sleep(1.5)
+        sleep(1)
     end
 end
 basalt.schedule(broadcast)

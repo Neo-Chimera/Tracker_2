@@ -18,7 +18,6 @@ form:addLabel():setPosition("{parent.width / 2 - 4}", "{parent.height - 3}"):set
 form:addInput():setPosition("{parent.width / 2 - 4}", "{parent.height - 2}"):setSize(12, 1):bind("text", "tracking_channel")
 local error_label = form:addLabel():setPosition("{parent.width / 2 - 4}", "{parent.height - 1}"):setText("")
 
---[[ executar ao mudar tracking_channel ]]
 local function reset_channel()
     local tracking_channel = main:getState("tracking_channel")
     local channel_number = tonumber(tracking_channel)
@@ -55,20 +54,37 @@ local function is_unserializable(str)
 end
 
 local function sanitize(input)
-    return tostring(input):gsub("[^a-zA-Z0-9=,]", "")
+    return tostring(input):gsub("[^%w=,%.%-%s]", "")
 end
 
+basalt.LOGGER.setEnabled(true)
+basalt.LOGGER.setLogToFile(true)
 
-
+local function stringifyTable(tbl)
+    local result = {}
+    for k, v in pairs(tbl) do
+        local keyStr = type(k) == "string" and ('"' .. k .. '"') or tostring(k)
+        table.insert(result, keyStr .. "=" .. tostring(v))
+    end
+    return table.concat(result, ", ")
+end
+--[[ o erro provavelmente tá aqui ]]
 local function hear()
     while true do
+        modem.close(65534)
         local event, side, channel, reply_channel, message, distance = os.pullEvent("modem_message")    
-        if channel ~= 65534 then
-            distance_label:setText(string.format("Last distance: %d", distance))                     
-            if(type(message)=="string") then
-                message_label:setText(sanitize(message))
-            end
+        
+        distance_label:setText(string.format("Last distance: %d", distance))                     
+        if(type(message)=="string") then
+            message_label:setText(sanitize(message))
+        else
+            local fallback = sanitize(textutils.serialize(message))
+            local pretty = require("cc.pretty")
+            basalt.LOGGER.debug(stringifyTable(message))
+            message_label:setText(fallback)
         end
+        
+        
         sleep(0.05)
     end
 end
