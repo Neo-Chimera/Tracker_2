@@ -10,7 +10,7 @@ local form = track_screen:addFrame()
 form:addLabel():setText("Track Someone"):setPosition(1,2)
 local distance_label =  form:addLabel():setText("Last distance: ?"):setPosition(1,3)
 
-local message_label =  form:addLabel():setPosition(1,5):setText("Message:")
+form:addLabel():setPosition(1,5):setText("Message:")
 local message_label =  form:addLabel():setPosition(1,6):setText(""):setSize(26, 5):setAutoSize(false)
 
 
@@ -48,26 +48,12 @@ main:onStateChange("tracking_channel", reset_channel)
 main:onStateChange("tracking_channel", validate_channel)
 
 
-local function is_unserializable(str)
-    local success, result = pcall(textutils.unserialize, str)
-    return success and result ~= nil
-end
-
 local function sanitize(input)
     return tostring(input):gsub("[^%w=,%.%-%s]", "")
 end
 
-basalt.LOGGER.setEnabled(true)
-basalt.LOGGER.setLogToFile(true)
 
-local function stringifyTable(tbl)
-    local result = {}
-    for k, v in pairs(tbl) do
-        local keyStr = type(k) == "string" and ('"' .. k .. '"') or tostring(k)
-        table.insert(result, keyStr .. "=" .. tostring(v))
-    end
-    return table.concat(result, ", ")
-end
+
 --[[ o erro provavelmente tá aqui ]]
 local function hear()
     while true do
@@ -80,10 +66,8 @@ local function hear()
         else
             local fallback = sanitize(textutils.serialize(message))
             local pretty = require("cc.pretty")
-            basalt.LOGGER.debug(stringifyTable(message))
             message_label:setText(fallback)
         end
-        
         
         sleep(0.05)
     end
