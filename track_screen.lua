@@ -60,7 +60,7 @@ local function hear()
         modem.close(65534)
         local event, side, channel, reply_channel, message, distance = os.pullEvent("modem_message")    
         
-        distance_label:setText(string.format("Last distance: %d", distance))                     
+        distance_label:setText(string.format("Last distance: %d", distance or 0))
         if(type(message)=="string") then
             message_label:setText(sanitize(message))
         else
