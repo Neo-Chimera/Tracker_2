@@ -9,7 +9,7 @@ form:addLabel():setText("By:"):setPosition(1,2)
 form:addLabel():setText("-Bot_Zero"):setColor(colors.purple):setPosition(1,3)
 
 form:addLabel():setText("Honor of:"):setPosition(1,5)
-form:addLabel():setText("Johannes Kepler Mancini von Neumann da Vinci of Marghita"):setPosition(1,6):setAutoSize(false):setSize(26,3)
+form:addLabel():setText("Johannes Kepler Mancini da Vinci"):setPosition(1,6):setAutoSize(false):setSize(26,3)
 form:addLabel():setText("-Madman of Wardenclyffe"):setColor(colors.purple):setPosition(1,9)
 
 form:addLabel():setText("Lab Neo-Chimera"):setPosition(1,16)
