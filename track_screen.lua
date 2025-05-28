@@ -54,21 +54,20 @@ end
 
 
 
---[[ o erro provavelmente tá aqui ]]
 local function hear()
     while true do
         modem.close(65534)
         local event, side, channel, reply_channel, message, distance = os.pullEvent("modem_message")    
-        
-        distance_label:setText(string.format("Last distance: %d", distance or 0))
-        if(type(message)=="string") then
-            message_label:setText(sanitize(message))
-        else
-            local fallback = sanitize(textutils.serialize(message))
-            local pretty = require("cc.pretty")
-            message_label:setText(fallback)
+        if channel ~= 65534 then
+            distance_label:setText(string.format("Last distance: %d", distance or 0))
+            if(type(message)=="string") then
+                message_label:setText(sanitize(message))
+            else
+                local fallback = sanitize(textutils.serialize(message))
+                local pretty = require("cc.pretty")
+                message_label:setText(fallback)
+            end
         end
-        
         sleep(0.05)
     end
 end
